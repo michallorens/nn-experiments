@@ -18,7 +18,8 @@ class Plot:
         self.last_accu = []
         self.best_accu = []
 
-        self.auto_open = True
+        #self.auto_open = True
+        self.auto_open = False
         self.test_toggle = False
 
     def __call__(self, mode, loss, correct):
