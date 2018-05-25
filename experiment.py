@@ -5,14 +5,14 @@ import torch.optim as optim
 import torch.optim.lr_scheduler as scheduler
 
 from datasets.viper import VIPeR
-from models.bkw import BkwNet
+from models.resnet import ResNet
 from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'triplet-sgd-distnet' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+name = 'resnet50-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
-net = TripletNet(BkwNet())
+net = TripletNet(ResNet(50, 1024, 64))
 net.cuda()
 
 criterion = nn.TripletMarginLoss().cuda()
