@@ -10,9 +10,9 @@ from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'resnet18-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+name = 'resnet152-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
-net = TripletNet(ResNet(18, 1024, 64))
+net = TripletNet(ResNet(152, 1024, 64))
 net.cuda()
 
 criterion = nn.TripletMarginLoss().cuda()
