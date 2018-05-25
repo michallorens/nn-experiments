@@ -10,7 +10,7 @@ from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'triplet-sgd-distnet' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+name = 'shallow-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
 net = TripletNet(BkwNet())
 net.cuda()
