@@ -12,7 +12,7 @@ from trainer import Trainer
 
 name = 'resnet50-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
-net = TripletNet(ResNet(50, 1024, 64))
+net = TripletNet(ResNet(18, 1024, 64))
 net.cuda()
 
 criterion = nn.TripletMarginLoss().cuda()

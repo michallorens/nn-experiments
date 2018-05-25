@@ -45,9 +45,9 @@ class VIPeR(Dataset):
         files_a[:], files_b[:] = zip(*files)
 
         a = files_a[split[0]:split[1]]
-        a = {path.split('\\')[1].split('_')[0] : path for path in a}
+        a = {path.split('/')[4].split('_')[0] : path for path in a}
         b = files_b[split[0]:split[1]]
-        b = {path.split('\\')[1].split('_')[0] : path for path in b}
+        b = {path.split('/')[4].split('_')[0] : path for path in b}
 
         for id, cam_a in a.items():
             cam_a = [id, cam_a]
