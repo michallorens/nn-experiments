@@ -10,7 +10,7 @@ from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'resnet50-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+name = 'resnet18-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
 net = TripletNet(ResNet(18, 1024, 64))
 net.cuda()
