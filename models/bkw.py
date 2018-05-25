@@ -14,7 +14,7 @@ class BkwNet(nn.Module):
         self.conv4 = nn.Conv2d(64, 64, 3, padding=1)
         self.conv5 = nn.Conv2d(64, 128, 3, padding=1)
         self.fc1 = nn.Linear(8192, 2048)
-        self.fc2 = nn.Linear(2048, 64)
+        self.fc2 = nn.Linear(2048, 32)
 
     def forward(self, x):
         x = f.relu(self.conv1(x))
