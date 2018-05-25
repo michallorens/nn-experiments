@@ -11,16 +11,14 @@ class Plot:
         self.epochs = list(range(0, epoch))
         self.rank = list(range(0, 100))
 
-        self.train_loss = []
-        self.val_loss = []
-        self.train_accu = []
-        self.val_accu = []
-        self.last_accu = []
-        self.best_accu = []
+        self.train_loss = [None]
+        self.val_loss = [None]
+        self.train_accu = [None]
+        self.val_accu = [None]
+        self.last_accu = [None]
+        self.best_accu = [None]
 
-        #self.auto_open = True
-        self.auto_open = False
-        self.test_toggle = False
+        self.second_test = False
 
     def __call__(self, mode, loss, correct):
         if mode == Mode.TRAIN:
@@ -29,15 +27,14 @@ class Plot:
         elif mode == Mode.VALIDATE:
             self.val_loss.append(loss)
             self.val_accu.append(correct)
-        elif mode == Mode.TEST and self.test_toggle is False:
+        elif mode == Mode.TEST and self.second_test is False:
             self.last_accu = loss
-            self.test_toggle = False
-        elif mode == Mode.TEST and self.test_toggle is True:
+            self.second_test = True
+        elif mode == Mode.TEST and self.second_test is True:
             self.best_accu = loss
-            self.test_toggle = True
+            self.second_test = False
 
         self.plot()
-        self.auto_open = False
 
     def plot(self):
         tr_acc = Scatter(x=self.epochs, y=self.train_accu, mode='lines', name='Train accuracy')
@@ -70,4 +67,4 @@ class Plot:
 
         chart['layout'].update(title=self.title)
 
-        po.plot(chart, filename=self.title + '.html', auto_open=self.auto_open)
+        po.plot(chart, filename=self.title + '.html', auto_open=False)
