@@ -14,7 +14,7 @@ from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'shallow-triplet-lmnn' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+name = 'shallow-triplet-itml' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
 net = TripletNet(BkwNet())
 net.load_state_dict(torch.load('shallow-triplet-64_2018-05-25_202105_model'))
