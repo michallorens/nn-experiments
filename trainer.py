@@ -7,13 +7,14 @@ from datasets.viper import Mode
 
 
 class Trainer:
-    def __init__(self, name, model, data_set, optimizer, scheduler, criterion, plot, batch_size=64, max_epoch=50, log_interval=15):
+    def __init__(self, name, model, data_set, optimizer, scheduler, criterion, plot, batch_size=64, max_epoch=50, log_interval=15, metric=None):
         train, val, test = data_set
         self.batch_size = batch_size
         self.train_set = DataLoader(train, batch_size=batch_size, shuffle=True, pin_memory=True, drop_last=True)
         self.test_set = DataLoader(test, batch_size=batch_size, shuffle=False, pin_memory=True, drop_last=True)
         self.validate_set = DataLoader(val, batch_size=batch_size, shuffle=False, pin_memory=False, drop_last=True)
-        self.distance = PairwiseDistance()
+        self.metric = metric
+        self.dist = PairwiseDistance()
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.criterion = criterion
@@ -33,7 +34,9 @@ class Trainer:
         for batch, inputs in enumerate(self.train_set):
             inputs = [i[1].cuda() for i in inputs]
             self.optimizer.zero_grad()
-            correct, a, p, n = self.model(*inputs)
+            a, p, n = self.model(*inputs)
+            a, p, n = self.metric_transform(a, p, n)
+            correct = self.dist(a, p) < self.dist(a, n)
             loss = self.criterion(a, p, n)
             summary_loss += loss.item()
             summary_correct += correct.sum().item()
@@ -63,7 +66,9 @@ class Trainer:
         for inputs in self.validate_set:
             inputs = [i[1].cuda() for i in inputs]
             with no_grad():
-                correct, anchors, positives, negatives = self.model(*inputs)
+                anchors, positives, negatives = self.model(*inputs)
+                anchors, positives, negatives = self.metric_transform(anchors, positives, negatives)
+                correct = self.dist(anchors, positives) < self.dist(anchors, negatives)
                 loss += self.criterion(anchors, positives, negatives).item()
                 summary_correct += correct.sum().item()
 
@@ -89,7 +94,9 @@ class Trainer:
             labels = inputs[0][0]
             inputs = [i[1].cuda() for i in inputs]
             with no_grad():
-                correct, anchors, positives, negatives = model(*inputs)
+                anchors, positives, negatives = model(*inputs)
+                anchors, positives, negatives = self.metric_transform(anchors, positives, negatives)
+                correct = self.dist(anchors, positives) < self.dist(anchors, negatives)
 
             for j, label in enumerate(labels):
                 if label not in ranks.keys():
@@ -102,6 +109,19 @@ class Trainer:
             accu_rank.append(100. * len([k for k in ranks.keys() if i >= ranks[k]]) / len(ranks.keys()))
 
         return accu_rank
+
+    def metric_transform(self, a, p, n):
+        if self.metric is not None:
+            a = a.cpu().numpy()
+            p = p.cpu().numpy()
+            n = n.cpu().numpy()
+            a = self.metric.transform(a)
+            p = self.metric.transform(p)
+            n = self.metric.transform(n)
+            a = torch.from_numpy(a)
+            p = torch.from_numpy(p)
+            n = torch.from_numpy(n)
+        return a, p, n
 
     def run(self):
         for epoch in range(0, self.max_epoch):
