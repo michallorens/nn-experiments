@@ -4,17 +4,17 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as scheduler
-from metric_learn import LMNN, ITML_Supervised
 from torch import no_grad
 from torch.utils.data import DataLoader
 
-from datasets.viper import VIPeR
+from datasets.viper import VIPeR, Mode
+from metric.kissme import KISSME
 from models.bkw import BkwNet
 from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'shallow-triplet-lmnn' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+name = 'shallow-triplet-kissme' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
 net = TripletNet(BkwNet())
 net.load_state_dict(torch.load('shallow-triplet-64_2018-05-25_202105_model'))
@@ -45,7 +45,7 @@ for inputs in train_loader:
 features = torch.stack(features).numpy()
 identities = list(map(int, identities))
 identities = torch.Tensor(identities).numpy()
-metric = ITML_Supervised(verbose=True)
+metric = KISSME()
 metric.fit(features, identities)
 
 criterion = nn.TripletMarginLoss().cuda()
@@ -54,4 +54,4 @@ scheduler = scheduler.ReduceLROnPlateau(optimizer, patience=1, eps=1e-8, verbose
 
 trainer = Trainer(name, net, VIPeR.create((316, 380)), optimizer, scheduler, criterion, plot,
                   batch_size=64, log_interval=10, max_epoch=15, metric=metric)
-trainer.test(net)
+plot(Mode.TEST, trainer.test(net), None)
