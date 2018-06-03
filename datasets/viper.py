@@ -92,13 +92,13 @@ class VIPeR(Dataset):
 
     @staticmethod
     def create(split, negative_samples=None, shuffle_seed=None, transform=transforms.Compose([
-                    Scale(64),
+                    Scale(299),
                     transforms.ToTensor(),
                     transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
                 ]),
                train_transform=transforms.Compose([
-                    transforms.RandomSizedCrop(64),
+                    transforms.RandomSizedCrop(299),
                     transforms.RandomHorizontalFlip(),
                     transforms.ToTensor(),
                     transforms.Normalize(mean=[0.485, 0.456, 0.406],
