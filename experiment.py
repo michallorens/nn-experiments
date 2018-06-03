@@ -5,14 +5,17 @@ import torch.optim as optim
 import torch.optim.lr_scheduler as scheduler
 
 from datasets.viper import VIPeR
+from models.inception import inception_v3
 from models.resnet import ResNet
 from models.triplet import TripletNet
 from plotter import Plot
 from trainer import Trainer
 
-name = 'resnet152-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
+
+name = 'inception-triplet-64' + datetime.now().strftime('_%Y-%m-%d_%H%M%S')
 plot = Plot(name)
-net = TripletNet(ResNet(152, 1024, 64))
+kwargs = {'num_classes': 64}
+net = TripletNet(inception_v3(**kwargs))
 net.cuda()
 
 criterion = nn.TripletMarginLoss().cuda()
