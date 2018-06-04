@@ -4,7 +4,7 @@ import torch.nn.functional as f
 
 class BkwNet(nn.Module):
 
-    def __init__(self):
+    def __init__(self, out):
         super(BkwNet, self).__init__()
 
         self.pool = nn.MaxPool2d(2)
@@ -14,7 +14,8 @@ class BkwNet(nn.Module):
         self.conv4 = nn.Conv2d(64, 64, 3, padding=1)
         self.conv5 = nn.Conv2d(64, 128, 3, padding=1)
         self.fc1 = nn.Linear(8192, 2048)
-        self.fc2 = nn.Linear(2048, 128)
+        self.bn1 = nn.BatchNorm1d(2048)
+        self.fc2 = nn.Linear(2048, out)
 
     def forward(self, x):
         x = f.relu(self.conv1(x))
@@ -24,5 +25,6 @@ class BkwNet(nn.Module):
         x = f.relu(self.pool(self.conv5(x)))
         x = x.view(-1, 8192)
         x = f.relu(self.fc1(x))
+        x = self.bn1(x)
         x = f.dropout(x, 0.5)
         return self.fc2(x)
