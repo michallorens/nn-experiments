@@ -1,6 +1,7 @@
 import os.path as osp
 import random
 import itertools
+import numpy as np
 from enum import Enum
 
 from zipfile import ZipFile
@@ -40,15 +41,17 @@ class CUHK01(Dataset):
         files_a[:], files_b[:] = zip(*files)
 
         a = files_a[split[0]:split[1]]
-        a = {int(path.split('\\')[1].split('.')[0][:-3]) : path for path in a}
+        a = [[int(path.split('\\')[1].split('.')[0][:-3]), path] for path in a]
         b = files_b[split[0]:split[1]]
-        b = {int(path.split('\\')[1].split('.')[0][:-3]) : path for path in b}
+        b = [[int(path.split('\\')[1].split('.')[0][:-3]), path] for path in b]
 
-        for id, cam_a in a.items():
+        for id, cam_a in a:
             cam_a = [id, cam_a]
             cam_b = [id, b[id]]
 
-            cam_n = [[n_id, b[n_id]] for n_id in a.keys() if n_id != id]
+            ids = np.array(a + b)[:, 0]
+
+            cam_n = [[n_id, b[int(n_id)]] for n_id in ids if n_id != id]
 
             triples = itertools.product([cam_a], [cam_b], cam_n)
             for anchor, positive, negative in triples:

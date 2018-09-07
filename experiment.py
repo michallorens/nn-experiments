@@ -53,6 +53,7 @@ criterion = nn.TripletMarginLoss().cuda()
 optimizer = optim.SGD(net.parameters(), lr=1e-2, momentum=0.9)
 scheduler = scheduler.ReduceLROnPlateau(optimizer, patience=1, eps=1e-8, verbose=True)
 
+
 trainer = Trainer(name, net, CUHK01.create((0, 971)), optimizer, scheduler, criterion, plot,
                   batch_size=64, log_interval=10, max_epoch=15, metric=metric)
 plot(Mode.TEST, trainer.test(net), None)
