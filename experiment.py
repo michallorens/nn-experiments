@@ -20,7 +20,7 @@ plot = Plot(name)
 net = TripletNet(BkwNet())
 net.load_state_dict(torch.load('shallow-triplet-128_2018-05-31_100915_model'))
 net.cuda()
-
+CUHK01.create((970, 971))
 train, _, _ = VIPeR.create((316, 380), negative_samples=1)
 train_loader = DataLoader(train, batch_size=64, shuffle=False, pin_memory=False, drop_last=False)
 features = []
@@ -54,6 +54,6 @@ optimizer = optim.SGD(net.parameters(), lr=1e-2, momentum=0.9)
 scheduler = scheduler.ReduceLROnPlateau(optimizer, patience=1, eps=1e-8, verbose=True)
 
 
-trainer = Trainer(name, net, CUHK01.create((0, 971)), optimizer, scheduler, criterion, plot,
+trainer = Trainer(name, net, CUHK01.create((970, 971)), optimizer, scheduler, criterion, plot,
                   batch_size=64, log_interval=10, max_epoch=15, metric=metric)
 plot(Mode.TEST, trainer.test(net), None)

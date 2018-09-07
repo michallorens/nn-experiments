@@ -45,13 +45,14 @@ class CUHK01(Dataset):
         b = files_b[split[0]:split[1]]
         b = [[int(path.split('\\')[1].split('.')[0][:-3]), path] for path in b]
 
-        for id, cam_a in a:
+        for idx, tmp in enumerate(a):
+            id, cam_a = tmp
             cam_a = [id, cam_a]
-            cam_b = [id, b[id]]
+            cam_b = [id, b[idx][1]]
 
             ids = np.array(a + b)[:, 0]
 
-            cam_n = [[n_id, b[int(n_id)]] for n_id in ids if n_id != id]
+            cam_n = [[b[int(n_id)][0], b[int(n_id)][1]] for n_id in ids if n_id != id]
 
             triples = itertools.product([cam_a], [cam_b], cam_n)
             for anchor, positive, negative in triples:
