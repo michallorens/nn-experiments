@@ -30,7 +30,7 @@ class CUHK01(Dataset):
                 zip_file.extractall('./data')
 
         files_a = sorted(glob(self.path + '*001.png'))
-        files_b = sorted(glob(self.path + '*002.png'))
+        files_b = sorted(glob(self.path + '*003.png'))
 
         files = sorted(zip(files_a, files_b))
         random.shuffle(files)

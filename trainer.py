@@ -99,10 +99,10 @@ class Trainer:
                 correct = self.dist(anchors, positives) < self.dist(anchors, negatives)
 
             for j, label in enumerate(labels):
-                if label not in ranks.keys():
-                    ranks[label] = 1
+                if int(label) not in ranks.keys():
+                    ranks[int(label)] = 1
                 else:
-                    ranks[label] += 1 - correct[j].item()
+                    ranks[int(label)] += 1 - correct[j].item()
 
         accu_rank = []
         for i in range(1, 101):
