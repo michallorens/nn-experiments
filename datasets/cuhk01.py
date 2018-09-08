@@ -29,30 +29,23 @@ class CUHK01(Dataset):
             with ZipFile(self.zip_path, 'r') as zip_file:
                 zip_file.extractall('./data')
 
-        files_a1 = sorted(glob(self.path + '*001.png'))
-        files_a2 = sorted(glob(self.path + '*002.png'))
-        files_a = files_a1 + files_a1 + files_a1 + files_a2 + files_a2
-        files_b1 = sorted(glob(self.path + '*003.png'))
-        files_b2 = sorted(glob(self.path + '*004.png'))
-        files_b = files_a2 + files_b1 + files_b2 + files_b1 + files_b2
+        files_a = sorted(glob(self.path + '*001.png'))
+        files_b = sorted(glob(self.path + '*002.png'))
 
         files = sorted(zip(files_a, files_b))
         random.shuffle(files)
         files_a[:], files_b[:] = zip(*files)
 
         a = files_a[split[0]:split[1]]
-        a = [[int(path.split('\\')[1].split('.')[0][:-3]), path] for path in a]
+        a = {int(path.split('\\')[1].split('.')[0][:-3]) : path for path in a}
         b = files_b[split[0]:split[1]]
-        b = [[int(path.split('\\')[1].split('.')[0][:-3]), path] for path in b]
+        b = {int(path.split('\\')[1].split('.')[0][:-3]) : path for path in b}
 
-        for idx, tmp in enumerate(a):
-            id, cam_a = tmp
+        for id, cam_a in a.items():
             cam_a = [id, cam_a]
-            cam_b = [id, b[idx][1]]
+            cam_b = [id, b[id]]
 
-            ids = np.array(a + b)[:, 0]
-
-            cam_n = [[b[int(n_id)][0], b[int(n_id)][1]] for n_id in ids if n_id != id]
+            cam_n = [[b[int(n_id)], b[int(n_id)]] for n_id in b.keys() if n_id != id]
 
             triples = itertools.product([cam_a], [cam_b], cam_n)
             for anchor, positive, negative in triples:
