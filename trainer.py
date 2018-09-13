@@ -106,10 +106,10 @@ class Trainer:
     def run(self):
         for epoch in range(0, self.max_epoch):
             self.train(epoch)
-            self.validate()
+            # self.validate()
             torch.save(self.model.state_dict(), self.name + '_last')
             print()
 
-        self.plot(Mode.TEST, self.test(self.model), None)
-        self.model.load_state_dict(torch.load(self.name + '_best'))
-        self.plot(Mode.TEST, self.test(self.model), None)
+        # self.plot(Mode.TEST, self.test(self.model), None)
+        # self.model.load_state_dict(torch.load(self.name + '_best'))
+        # self.plot(Mode.TEST, self.test(self.model), None)
